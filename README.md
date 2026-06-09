@@ -40,7 +40,7 @@ For a detailed guide on setup and usage, please refer to the full [Service Provi
 
 The template generator (`cmd/template`) supports the following flags:
 
-- `-module`: Go module path (default: `github.com/openmcp-project/service-provider-template`)
+- `-module`: Go module path (default: `github.com/openmcp-project/platform-service-template`)
 - `-kind`: GVK kind name (default: `FooService`)
 - `-group`: GVK group prefix, will be suffixed with `services.open-control-plane.io` (default: `foo`)
 - `-v`: Generate with sample code (default: `false`)
