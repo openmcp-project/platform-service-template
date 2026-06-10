@@ -1,0 +1,5 @@
+apiVersion: foo.platform.open-control-plane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: fooservice
+spec: {}

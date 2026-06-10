@@ -9,47 +9,25 @@ A template for building @openmcp-project Platform Services.
 ## Requirements and Setup
 
 1. Create a new repository based on this template.
-2. Execute the template to create a new Platform Service.
-3. Test your Platform Service.
+2. Execute `init.sh` to adjust the file, struct and function names for your Platform Service.
+3. Test your Platform Service with `task test-e2e`
 
-The template includes a basic code generation command that lets you create a Platform Service for your Go module, API kind and group.
+The template provides a basic Platform Service with a Config and API CRD. The Config is installed on the platform cluster and the API on the onboarding clusters (see design docs TODO).
 
-For a complete usage overview with the default settings, run:
-
-```shell
-go run ./cmd/template -h
-```
-
-Then execute the template, for example:
-
-```shell
-go run ./cmd/template -module github.com/yourorg/yourrepo -kind YourKind -group yourgroup
-```
-
-Running End-to-End tests:
-
-```shell
-task test-e2e
-```
-
-For a detailed guide on setup and usage, please refer to the full [Service Provider Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
+For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
 
 ## CLI Flags
 
-### Template Generator Flags
+### Init Script Arguments
 
-The template generator (`cmd/template`) supports the following flags:
+The template init script (`init.sh`) supports the following argument:
 
-- `-module`: Go module path (default: `github.com/openmcp-project/platform-service-template`)
-- `-kind`: GVK kind name (default: `FooService`)
-- `-group`: GVK group prefix, will be suffixed with `services.open-control-plane.io` (default: `foo`)
-- `-v`: Generate with sample code (default: `false`)
-- `-w`: Generate a service provider that reconciles its `DomainServiceAPI` on the [WorkloadCluster](https://openmcp-project.github.io/docs/about/design/service-provider#deployment-model) (default: `false`)
-- `-s`: Generate secret watcher implementation (default: `false`)
+- `$1`: Go module path (default: `github.com/openmcp-project/platform-service-template`)
+- `$2`: GVK kind name (default: `FooService`)
 
 ### Platform Service Runtime Flags
 
-The generated service provider supports the following runtime flags:
+The generated platform service supports the following runtime flags:
 
 - `--verbosity`: Logging verbosity level (see [controller-runtime logging](https://github.com/kubernetes-sigs/controller-runtime/blob/main/TMP-LOGGING.md))
 - `--environment`: Name of the environment (required for operation)

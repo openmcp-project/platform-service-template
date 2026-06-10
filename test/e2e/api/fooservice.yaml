@@ -1,0 +1,6 @@
+apiVersion: foo.platform.open-control-plane.io/v1alpha1
+kind: FooService
+metadata:
+  name: test-mcp
+spec:
+  foo: bar
