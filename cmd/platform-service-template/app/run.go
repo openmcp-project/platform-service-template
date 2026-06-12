@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/certwatcher"
@@ -21,7 +23,9 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
+	"github.com/openmcp-project/controller-utils/pkg/clusters"
 	"github.com/openmcp-project/controller-utils/pkg/logging"
+	localaccess "github.com/openmcp-project/opencontrolplane-runtime/pkg/serviceprovider/clusteraccess"
 	clustersv1alpha1 "github.com/openmcp-project/openmcp-operator/api/clusters/v1alpha1"
 	openmcpconst "github.com/openmcp-project/openmcp-operator/api/constants"
 	"github.com/openmcp-project/openmcp-operator/lib/clusteraccess"
@@ -30,6 +34,8 @@ import (
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
 	"github.com/openmcp-project/platform-service-template/internal/controller"
 )
+
+const debugEnvVar = "DEV_DEBUG"
 
 var setupLog logging.Logger
 
@@ -243,13 +249,13 @@ func (o *RunOptions) Run(ctx context.Context) error {
 			Rules: []rbacv1.PolicyRule{
 				{
 					APIGroups: []string{v1alpha1.GroupVersion.Group},
-					Resources: []string{"fooservices"},
+					Resources: []string{"foos"},
 					Verbs:     []string{"*"},
 				},
 			},
 		},
 	}
-	onboardingCluster, err := clusterAccessManager.CreateAndWaitForCluster(ctx, clustersv1alpha1.PURPOSE_ONBOARDING, clustersv1alpha1.PURPOSE_ONBOARDING, onboardingScheme, onboardingClusterPermissions)
+	onboardingCluster, err := requestOnboardingClusterAccess(ctx, clusterAccessManager, o.PlatformCluster, onboardingScheme, onboardingClusterPermissions, "run")
 	if err != nil {
 		return fmt.Errorf("error creating/updating onboarding cluster: %w", err)
 	}
@@ -317,4 +323,34 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func requestOnboardingClusterAccess(ctx context.Context, mgr clusteraccess.Manager, platformCluster *clusters.Cluster, onboardingScheme *runtime.Scheme, permissions []clustersv1alpha1.PermissionsRequest, cmdSuffix string) (*clusters.Cluster, error) {
+	cluster, err := mgr.CreateAndWaitForCluster(ctx, "onboarding-"+cmdSuffix,
+		clustersv1alpha1.PURPOSE_ONBOARDING, onboardingScheme, permissions)
+	if err != nil {
+		return cluster, err
+	}
+	if debugEnabled() {
+		return patchOnboardingClient(ctx, platformCluster, cluster, "onboarding-"+cmdSuffix)
+	}
+	return cluster, nil
+}
+
+func patchOnboardingClient(ctx context.Context, platformCluster *clusters.Cluster, onboardingCluster *clusters.Cluster, cmdSuffix string) (*clusters.Cluster, error) {
+	onboardingAr := &clustersv1alpha1.AccessRequest{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      clusteraccess.StableRequestNameFromLocalName("externalsecretsoperator.external-secrets.services.openmcp.cloud", cmdSuffix),
+			Namespace: os.Getenv("POD_NAMESPACE"),
+		},
+	}
+	if err := platformCluster.Client().Get(ctx, client.ObjectKeyFromObject(onboardingAr), onboardingAr); err != nil {
+		return onboardingCluster, err
+	}
+	return localaccess.MustPatchClusterClient(ctx, onboardingAr, onboardingCluster), nil
+}
+
+func debugEnabled() bool {
+	v := strings.ToLower(os.Getenv(debugEnvVar))
+	return v == "1" || v == "true"
 }

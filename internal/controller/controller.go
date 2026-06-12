@@ -40,7 +40,7 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 	// 1. get obj
 	obj := &v1alpha1.Foo{}
 	if err := r.onboardingCluster.Client().Get(ctx, req.NamespacedName, obj); err != nil {
-		return ctrl.Result{}, client.IgnoreNotFound(err)
+		return reconcile.Result{}, client.IgnoreNotFound(err)
 	}
 	// handle operation annotation
 	if obj.GetAnnotations() != nil {
@@ -64,7 +64,7 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 		if apierrors.IsNotFound(err) {
 			log.Info("No config found", "name", r.providerName)
 		}
-		return ctrl.Result{}, client.IgnoreNotFound(err)
+		return reconcile.Result{}, client.IgnoreNotFound(err)
 	}
 	// 3. TODO: reconcile obj
 	return reconcile.Result{}, nil
@@ -76,9 +76,27 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 		WatchesRawSource(source.Kind(
 			r.platformCluster.Cluster().GetCache(),
 			&v1alpha1.ProviderConfig{},
-			&handler.TypedEnqueueRequestForObject[*v1alpha1.ProviderConfig]{},
+			handler.TypedEnqueueRequestsFromMapFunc(r.enqueueAll()),
 			ctrlutils.ToTypedPredicate[*v1alpha1.ProviderConfig](ctrlutils.ExactNamePredicate(r.providerName, "")),
 		)).
 		Named(r.providerName).
 		Complete(r)
+}
+
+// create a reconcile.Request for every existing foo object on provider config changes.
+func (r *FooReconciler) enqueueAll() func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
+	return func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
+		list := &v1alpha1.FooList{}
+		if err := r.onboardingCluster.Client().List(ctx, list); err != nil {
+			logf.FromContext(ctx).Error(err, "failed to list foo objects")
+			return nil
+		}
+		reqs := make([]reconcile.Request, 0, len(list.Items))
+		for _, obj := range list.Items {
+			reqs = append(reqs, reconcile.Request{
+				NamespacedName: client.ObjectKeyFromObject(&obj),
+			})
+		}
+		return reqs
+	}
 }

@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 		},
 		PlatformServices: []platformservices.PlatformServiceSetup{
 			{
-				Name:               "fooservice",
+				Name:               "foo",
 				Image:              fmt.Sprintf("ghcr.io/openmcp-project/images/platform-service-template:%s", version),
 				LoadImageToCluster: true,
 			},

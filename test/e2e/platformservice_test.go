@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/e2e-framework/klient/wait"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -16,15 +17,6 @@ import (
 
 func TestPlatformService(t *testing.T) {
 	basicPlatformServiceTest := features.New("provider test").
-		Setup(func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
-			// create config on platform cluster
-			v1alpha1.AddToScheme(c.GetClient().Resources().GetScheme())
-			config := &v1alpha1.ProviderConfig{}
-			if err := c.GetClient().Resources().Create(ctx, config); err != nil {
-				t.Errorf("(platform cluster) failed to create provider config: %v", err)
-			}
-			return ctx
-		}).
 		Assess("verify service can be successfully consumed",
 			func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 				onboardingConfig, err := clusterutils.OnboardingConfig()
@@ -34,7 +26,9 @@ func TestPlatformService(t *testing.T) {
 				}
 				v1alpha1.AddToScheme(onboardingConfig.GetClient().Resources().GetScheme())
 				api := &v1alpha1.Foo{}
-				if err := c.GetClient().Resources().Create(ctx, api); err != nil {
+				api.SetName("test")
+				api.SetNamespace(metav1.NamespaceDefault)
+				if err := onboardingConfig.GetClient().Resources().Create(ctx, api); err != nil {
 					t.Errorf("(onboarding cluster) failed to create foo object: %v", err)
 				}
 				return ctx
