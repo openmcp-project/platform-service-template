@@ -38,7 +38,7 @@ func NewFooReconciler(platformCluster, onboardingCluster *clusters.Cluster, prov
 func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
 	log := logf.FromContext(ctx)
 	// 1. get obj
-	obj := &v1alpha1.FooService{}
+	obj := &v1alpha1.Foo{}
 	if err := r.onboardingCluster.Client().Get(ctx, req.NamespacedName, obj); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
@@ -72,7 +72,7 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 
 func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&v1alpha1.FooService{}).
+		For(&v1alpha1.Foo{}).
 		WatchesRawSource(source.Kind(
 			r.platformCluster.Cluster().GetCache(),
 			&v1alpha1.ProviderConfig{},

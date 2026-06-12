@@ -12,10 +12,9 @@ import (
 	"github.com/openmcp-project/controller-utils/pkg/logging"
 )
 
-func NewPlatformServiceFooCommand() *cobra.Command {
+func NewPlatformServiceCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "platform-service-foo",
-		Short: "platform-service-foo manages fooservices",
+		Use: "platform-service",
 	}
 	cmd.SetOut(os.Stdout)
 	cmd.SetErr(os.Stderr)

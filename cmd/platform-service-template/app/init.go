@@ -14,6 +14,7 @@ import (
 	crdutil "github.com/openmcp-project/controller-utils/pkg/crds"
 	clustersv1alpha1 "github.com/openmcp-project/openmcp-operator/api/clusters/v1alpha1"
 	openmcpconst "github.com/openmcp-project/openmcp-operator/api/constants"
+
 	"github.com/openmcp-project/openmcp-operator/lib/clusteraccess"
 
 	"github.com/openmcp-project/platform-service-template/api/crds"
@@ -26,7 +27,7 @@ func NewInitCommand(so *SharedOptions) *cobra.Command {
 	}
 	cmd := &cobra.Command{
 		Use:   "init",
-		Short: "Initialize Platform Service Foo",
+		Short: "Initialize the Platform Service",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.PrintRawOptions(cmd)
 			if err := opts.Complete(cmd.Context()); err != nil {

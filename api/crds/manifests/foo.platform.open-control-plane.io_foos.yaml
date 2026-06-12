@@ -6,14 +6,14 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.20.1
   labels:
     openmcp.cloud/cluster: onboarding
-  name: fooservices.foo.platform.open-control-plane.io
+  name: foos.foo.platform.open-control-plane.io
 spec:
   group: foo.platform.open-control-plane.io
   names:
-    kind: FooService
-    listKind: FooServiceList
-    plural: fooservices
-    singular: fooservice
+    kind: Foo
+    listKind: FooList
+    plural: foos
+    singular: foo
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -26,7 +26,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: FooService is the Schema for the fooservices API
+        description: Foo is the Schema for the Foo API
         properties:
           apiVersion:
             description: |-
@@ -46,11 +46,11 @@ spec:
           metadata:
             type: object
           spec:
-            description: spec defines the desired state of FooService
+            description: spec defines the desired state of Foo
             properties:
               foo:
-                description: foo is an example field of FooService. Edit fooservice_types.go
-                  to remove/update
+                description: foo is an example field of Foo. Edit foo_types.go to
+                  remove/update
                 type: string
             type: object
         required:

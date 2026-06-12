@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	cmd := app.NewPlatformServiceFooCommand()
+	cmd := app.NewPlatformServiceCommand()
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Print(err)

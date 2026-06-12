@@ -24,48 +24,48 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// FooServiceSpec defines the desired state of FooService
-type FooServiceSpec struct {
+// FooSpec defines the desired state of Foo
+type FooSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 	// The following markers will use OpenAPI v3 schema to validate the value
 	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
 
-	// foo is an example field of FooService. Edit fooservice_types.go to remove/update
+	// foo is an example field of Foo. Edit foo_types.go to remove/update
 	// +optional
 	Foo *string `json:"foo,omitempty"`
 }
 
-// FooService is the Schema for the fooservices API
+// Foo is the Schema for the Foo API
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:JSONPath=`.status.phase`,name="Phase",type=string
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:metadata:labels="openmcp.cloud/cluster=onboarding"
-type FooService struct {
+type Foo struct {
 	metav1.TypeMeta `json:",inline"`
 
 	// metadata is a standard object metadata
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitempty,omitzero"`
 
-	// spec defines the desired state of FooService
+	// spec defines the desired state of Foo
 	// +required
-	Spec FooServiceSpec `json:"spec"`
+	Spec FooSpec `json:"spec"`
 }
 
 // +kubebuilder:object:root=true
 
-// FooServiceList contains a list of FooService
-type FooServiceList struct {
+// FooList contains a list of Foo
+type FooList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []FooService `json:"items"`
+	Items           []Foo `json:"items"`
 }
 
 func init() {
 	SchemeBuilder.Register(func(s *runtime.Scheme) error {
-		s.AddKnownTypes(GroupVersion, &FooService{}, &FooServiceList{})
+		s.AddKnownTypes(GroupVersion, &Foo{}, &FooList{})
 		return nil
 	})
 }

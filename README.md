@@ -9,7 +9,7 @@ A template for building @openmcp-project Platform Services.
 ## Requirements and Setup
 
 1. Create a new repository based on this template.
-2. Execute `init.sh` to adjust the file, struct and function names for your Platform Service.
+2. Execute `template-gen` to adjust the name and API type of the Platform Service.
 3. Test your Platform Service with `task test-e2e`
 
 The template provides a basic Platform Service with a Config and API CRD. The Config is installed on the platform cluster and the API on the onboarding clusters (see design docs TODO).
@@ -18,12 +18,29 @@ For a detailed guide on setup and usage, please refer to the full [Platform Serv
 
 ## CLI Flags
 
-### Init Script Arguments
+### template-gen Flags
 
-The template init script (`init.sh`) supports the following argument:
+The (`template-gen`) executable supports the following flags:
 
-- `$1`: Go module path (default: `github.com/openmcp-project/platform-service-template`)
-- `$2`: GVK kind name (default: `FooService`)
+```shell
+  -debug
+        print debug logs instead of in-memory transformation result (default false)
+  -dry-run
+        print in-memory result to stdout without altering any files (default true)
+  -kind string
+        the name of the API to watch on the onboarding cluster (default "Foo")
+  -module string
+        the go module name of your platform service (default "github.com/openmcp-project/platform-service-foo")
+```
+
+### template-gen Development
+
+Use `parser.ParseExpr` to find out the AST type of an expression you need to modify, e.g.
+
+```go
+e, err := parser.ParseExpr("&Foo{}")
+```
+
 
 ### Platform Service Runtime Flags
 
