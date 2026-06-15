@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 package e2e
 
 import (
@@ -12,6 +13,7 @@ import (
 
 	"github.com/openmcp-project/openmcp-testing/pkg/clusterutils"
 	"github.com/openmcp-project/openmcp-testing/pkg/resources"
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
 )
 
@@ -25,11 +27,13 @@ func TestPlatformService(t *testing.T) {
 					return ctx
 				}
 				v1alpha1.AddToScheme(onboardingConfig.GetClient().Resources().GetScheme())
+				//ocp-gen:replace Foo=KIND
 				api := &v1alpha1.Foo{}
 				api.SetName("test")
 				api.SetNamespace(metav1.NamespaceDefault)
 				if err := onboardingConfig.GetClient().Resources().Create(ctx, api); err != nil {
-					t.Errorf("(onboarding cluster) failed to create foo object: %v", err)
+					//ocp-gen:replace Foo=KIND
+					t.Errorf("(onboarding cluster) failed to create Foo object: %v", err)
 				}
 				return ctx
 			}).
@@ -41,6 +45,7 @@ func TestPlatformService(t *testing.T) {
 					return ctx
 				}
 				v1alpha1.AddToScheme(onboardingConfig.GetClient().Resources().GetScheme())
+				//ocp-gen:replace Foo=KIND
 				apiList := &v1alpha1.FooList{}
 				if err := onboardingConfig.GetClient().Resources().List(ctx, apiList); err != nil {
 					t.Error(err)
@@ -48,7 +53,8 @@ func TestPlatformService(t *testing.T) {
 				}
 				for _, obj := range apiList.Items {
 					if err := resources.DeleteObject(ctx, onboardingConfig, &obj, wait.WithTimeout(time.Minute)); err != nil {
-						t.Errorf("(onboarding cluster) failed to delete foo object: %v", err)
+						//ocp-gen:replace Foo=KIND
+						t.Errorf("(onboarding cluster) failed to delete Foo object: %v", err)
 					}
 				}
 				return ctx

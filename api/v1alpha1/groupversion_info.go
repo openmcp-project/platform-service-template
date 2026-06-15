@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 /*
 Copyright 2025.
 
@@ -16,7 +17,7 @@ limitations under the License.
 
 // Package v1alpha1 contains API Schema definitions for the services v1alpha1 API group.
 // +kubebuilder:object:generate=true
-// +groupName=foo.platform.open-control-plane.io
+// +groupName=.platform.open-control-plane.io
 package v1alpha1
 
 import (
@@ -27,7 +28,7 @@ import (
 
 var (
 	// GroupVersion is group version used to register these objects.
-	GroupVersion = schema.GroupVersion{Group: "foo.platform.open-control-plane.io", Version: "v1alpha1"}
+	GroupVersion = schema.GroupVersion{Group: ".platform.open-control-plane.io", Version: "v1alpha1"}
 
 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
 	SchemeBuilder = runtime.NewSchemeBuilder(func(s *runtime.Scheme) error {

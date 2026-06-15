@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 package controller
 
 import (
@@ -14,6 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
 
 	ctrlutils "github.com/openmcp-project/controller-utils/pkg/controller"
@@ -21,13 +23,16 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
+// ocp-gen:replace Foo=KIND
 type FooReconciler struct {
 	platformCluster   *clusters.Cluster
 	onboardingCluster *clusters.Cluster
 	providerName      string
 }
 
+// ocp-gen:replace Foo=KIND
 func NewFooReconciler(platformCluster, onboardingCluster *clusters.Cluster, providerName string) *FooReconciler {
+	//ocp-gen:replace Foo=KIND
 	return &FooReconciler{
 		platformCluster:   platformCluster,
 		onboardingCluster: onboardingCluster,
@@ -35,9 +40,11 @@ func NewFooReconciler(platformCluster, onboardingCluster *clusters.Cluster, prov
 	}
 }
 
+// ocp-gen:replace Foo=KIND
 func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
 	log := logf.FromContext(ctx)
 	// 1. get obj
+	//ocp-gen:replace Foo=KIND
 	obj := &v1alpha1.Foo{}
 	if err := r.onboardingCluster.Client().Get(ctx, req.NamespacedName, obj); err != nil {
 		return reconcile.Result{}, client.IgnoreNotFound(err)
@@ -70,8 +77,10 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 	return reconcile.Result{}, nil
 }
 
+// ocp-gen:replace Foo=KIND
 func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
+		//ocp-gen:replace Foo=KIND
 		For(&v1alpha1.Foo{}).
 		WatchesRawSource(source.Kind(
 			r.platformCluster.Cluster().GetCache(),
@@ -83,12 +92,16 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 		Complete(r)
 }
 
-// create a reconcile.Request for every existing foo object on provider config changes.
+// ocp-gen:replace Foo=KIND
+// create a reconcile.Request for every existing Foo object on provider config changes.
+// ocp-gen:replace Foo=KIND
 func (r *FooReconciler) enqueueAll() func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
 	return func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
+		//ocp-gen:replace Foo=KIND
 		list := &v1alpha1.FooList{}
 		if err := r.onboardingCluster.Client().List(ctx, list); err != nil {
-			logf.FromContext(ctx).Error(err, "failed to list foo objects")
+			//ocp-gen:replace foo=KIND
+			logf.FromContext(ctx).Error(err, "failed to list Foo objects")
 			return nil
 		}
 		reqs := make([]reconcile.Request, 0, len(list.Items))

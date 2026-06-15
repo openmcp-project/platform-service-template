@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 package providerscheme
 
 import (
@@ -7,6 +8,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 
 	clustersv1alpha1 "github.com/openmcp-project/openmcp-operator/api/clusters/v1alpha1"
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
 )
 

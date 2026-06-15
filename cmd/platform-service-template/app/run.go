@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 package app
 
 import (
@@ -30,8 +31,11 @@ import (
 	openmcpconst "github.com/openmcp-project/openmcp-operator/api/constants"
 	"github.com/openmcp-project/openmcp-operator/lib/clusteraccess"
 
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/providerscheme"
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/internal/controller"
 )
 
@@ -249,6 +253,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 			Rules: []rbacv1.PolicyRule{
 				{
 					APIGroups: []string{v1alpha1.GroupVersion.Group},
+					//ocp-gen:replace foo=KIND_LOWER
 					Resources: []string{"foos"},
 					Verbs:     []string{"*"},
 				},
@@ -271,7 +276,8 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		HealthProbeBindAddress: o.ProbeAddr,
 		PprofBindAddress:       o.PprofAddr,
 		LeaderElection:         o.EnableLeaderElection,
-		LeaderElectionID:       "github.com/openmcp-project/platform-service-foo",
+		//ocp-gen:replace foo=KIND_LOWER
+		LeaderElectionID: "github.com/openmcp-project/platform-service-foo",
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
 		// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
@@ -291,9 +297,10 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("unable to add platform cluster to manager: %w", err)
 	}
 
-	// setup foo reconciler
+	//ocp-gen:replace Foo=KIND
 	if err := controller.NewFooReconciler(o.PlatformCluster, onboardingCluster, o.ProviderName).SetupWithManager(mgr); err != nil {
-		return fmt.Errorf("unable to add foo reconciler to manager: %w", err)
+		//ocp-gen:replace Foo=KIND
+		return fmt.Errorf("unable to add FooReconciler to manager: %w", err)
 	}
 
 	if o.MetricsCertWatcher != nil {

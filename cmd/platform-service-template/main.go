@@ -1,9 +1,11 @@
+//go:generate ocp-gen
 package main
 
 import (
 	"fmt"
 	"os"
 
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/cmd/platform-service-template/app"
 )
 

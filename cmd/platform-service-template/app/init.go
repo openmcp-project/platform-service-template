@@ -19,8 +19,11 @@ import (
 
 	"github.com/openmcp-project/openmcp-operator/lib/clusteraccess"
 
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/crds"
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/providerscheme"
+	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
 )
 

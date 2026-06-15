@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 package e2e
 
 import (
@@ -38,6 +39,7 @@ func TestMain(m *testing.M) {
 		},
 		PlatformServices: []platformservices.PlatformServiceSetup{
 			{
+				//ocp-gen:replace foo=SERVICE_NAME_LOWER
 				Name:               "foo",
 				Image:              fmt.Sprintf("ghcr.io/openmcp-project/images/platform-service-template:%s", version),
 				LoadImageToCluster: true,

@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+//go:generate ocp-gen
 package v1alpha1
 
 import (
@@ -24,24 +25,29 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+// ocp-gen:replace Foo=KIND
 // FooSpec defines the desired state of Foo
+// ocp-gen:replace Foo=KIND
 type FooSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 	// The following markers will use OpenAPI v3 schema to validate the value
 	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
 
-	// foo is an example field of Foo. Edit foo_types.go to remove/update
+	// ocp-gen:replace Foo=KIND
+	// foo is an example field of Foo. Edit api_types.go to remove/update
 	// +optional
 	Foo *string `json:"foo,omitempty"`
 }
 
+// ocp-gen:replace Foo=KIND
 // Foo is the Schema for the Foo API
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:JSONPath=`.status.phase`,name="Phase",type=string
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:metadata:labels="openmcp.cloud/cluster=onboarding"
+// ocp-gen:replace Foo=KIND
 type Foo struct {
 	metav1.TypeMeta `json:",inline"`
 
@@ -49,13 +55,16 @@ type Foo struct {
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitempty,omitzero"`
 
+	// ocp-gen:replace Foo=KIND
 	// spec defines the desired state of Foo
 	// +required
+	// ocp-gen:replace Foo=KIND
 	Spec FooSpec `json:"spec"`
 }
 
 // +kubebuilder:object:root=true
 
+// ocp-gen:replace Foo=KIND
 // FooList contains a list of Foo
 type FooList struct {
 	metav1.TypeMeta `json:",inline"`
