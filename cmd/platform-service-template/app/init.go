@@ -1,3 +1,4 @@
+//go:generate ocp-gen
 package app
 
 import (
