@@ -9,10 +9,18 @@ A template for building @openmcp-project Platform Services.
 ## Requirements and Setup
 
 1. Create a new repository based on this template.
-2. Use `task generate-service` to adjust the name and API type of the Platform Service.
-3. Test your Platform Service with `task test-e2e`
+2. Use `task generate-service` to create a new Platform Service.
+3. Test your Platform Service with `task test-e2e`.
 
-The template provides a basic Platform Service with a Config and API CRD. The Config is installed on the platform cluster and the API on the onboarding clusters (see design docs TODO).
+The template provides a basic Platform Service with a Config and API CRD (see design docs TODO).
+
+To adjust the service and API name, use:
+
+```shell
+task generate-service module=github.com/myorg/my-platform-service kind=MyKind
+```
+
+By default `task generate-service` will print the in-memory result to sdtout instead of writing changes to the filesystem.
 
 For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
 
