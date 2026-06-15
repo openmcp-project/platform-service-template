@@ -66,14 +66,17 @@ type Foo struct {
 
 // ocp-gen:replace Foo=KIND
 // FooList contains a list of Foo
+// ocp-gen:replace Foo=KIND
 type FooList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Foo `json:"items"`
+	// ocp-gen:replace Foo=KIND
+	Items []Foo `json:"items"`
 }
 
 func init() {
 	SchemeBuilder.Register(func(s *runtime.Scheme) error {
+		// ocp-gen:replace Foo=KIND
 		s.AddKnownTypes(GroupVersion, &Foo{}, &FooList{})
 		return nil
 	})
