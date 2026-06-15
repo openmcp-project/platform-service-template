@@ -46,10 +46,11 @@ tasks:
       KIND_LOWER: "{{ lower .kind }}"
       SERVICE_NAME: "{{ .name }}"
       SERVICE_NAME_LOWER: "{{ lower .name }}"
+      CMD_FOLDER: "platform-service-{{ lower .name }}"
       MODULE: "{{ .module }}"
     cmds:
       - DRY_RUN={{.dryrun}} go generate ./...
-      - cmd: mv ./cmd/platform-service-template ./cmd/platform-service-{{.name}}
+      - cmd: mv ./cmd/platform-service-template ./cmd/${CMD_FOLDER}
         if: '{{eq .dryrun "false"}}'
       - cmd: go mod edit -module {{.module}}
         if: '{{eq .dryrun "false"}}'
