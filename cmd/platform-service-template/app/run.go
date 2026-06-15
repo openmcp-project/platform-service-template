@@ -253,7 +253,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 			Rules: []rbacv1.PolicyRule{
 				{
 					APIGroups: []string{v1alpha1.GroupVersion.Group},
-					//ocp-gen:replace foo=KIND_LOWER
+					// ocp-gen:replace foo=KIND_LOWER
 					Resources: []string{"foos"},
 					Verbs:     []string{"*"},
 				},
@@ -276,7 +276,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		HealthProbeBindAddress: o.ProbeAddr,
 		PprofBindAddress:       o.PprofAddr,
 		LeaderElection:         o.EnableLeaderElection,
-		//ocp-gen:replace foo=KIND_LOWER
+		// ocp-gen:replace foo=KIND_LOWER
 		LeaderElectionID: "github.com/openmcp-project/platform-service-foo",
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
@@ -297,9 +297,9 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("unable to add platform cluster to manager: %w", err)
 	}
 
-	//ocp-gen:replace Foo=KIND
+	// ocp-gen:replace Foo=KIND
 	if err := controller.NewFooReconciler(o.PlatformCluster, onboardingCluster, o.ProviderName).SetupWithManager(mgr); err != nil {
-		//ocp-gen:replace Foo=KIND
+		// ocp-gen:replace Foo=KIND
 		return fmt.Errorf("unable to add FooReconciler to manager: %w", err)
 	}
 

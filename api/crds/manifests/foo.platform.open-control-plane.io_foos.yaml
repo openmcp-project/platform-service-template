@@ -26,7 +26,10 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Foo is the Schema for the Foo API
+        description: |-
+          ocp-gen:replace Foo=KIND
+          Foo is the Schema for the Foo API
+          ocp-gen:replace Foo=KIND
         properties:
           apiVersion:
             description: |-
@@ -46,11 +49,15 @@ spec:
           metadata:
             type: object
           spec:
-            description: spec defines the desired state of Foo
+            description: |-
+              ocp-gen:replace Foo=KIND
+              spec defines the desired state of Foo
+              ocp-gen:replace Foo=KIND
             properties:
               foo:
-                description: foo is an example field of Foo. Edit foo_types.go to
-                  remove/update
+                description: |-
+                  ocp-gen:replace Foo=KIND
+                  foo is an example field of Foo. Edit api_types.go to remove/update
                 type: string
             type: object
         required:
