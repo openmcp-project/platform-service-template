@@ -36,11 +36,13 @@ For a detailed guide on setup and usage, please refer to the full [Platform Serv
   -dry-run bool
         print in-memory result to stdout without altering any files (default true)
   -kind string
-        the name of the API to watch on the onboarding cluster (default "MyKind")
+        the name of the API to on the watched cluster (default "Example")
   -name string
-        the name of the platform service (default "myname")
+        the name of the platform service (default "example")
   -module string
-        the go module name of your platform service (default "github.com/openmcp-project/platform-service-myname")
+        the go module name of your platform service (default "github.com/openmcp-project/platform-service-example")
+  -watch string
+        the cluster to watch, allowed values are "platform" or "onboarding" (default "platform")
 ```
 
 ### Platform Service Runtime Flags

@@ -46,6 +46,7 @@ type FooSpec struct {
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:JSONPath=`.status.phase`,name="Phase",type=string
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
+// ocp-gen:replace onboarding=WATCH
 // +kubebuilder:metadata:labels="openmcp.cloud/cluster=onboarding"
 // ocp-gen:replace Foo=KIND
 type Foo struct {

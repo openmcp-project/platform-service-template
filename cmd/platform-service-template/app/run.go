@@ -235,8 +235,10 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("ProviderConfig '%s' is invalid: %w", svcCfg.Name, err)
 	}
 
+	// ocp-gen:if WATCH=onboarding
 	setupLog.Info("Getting access to the onboarding cluster")
 	onboardingScheme := providerscheme.InstallOperatorAPIsOnboarding(runtime.NewScheme())
+	// ocp-gen:fi
 
 	providerSystemNamespace := os.Getenv(openmcpconst.EnvVariablePodNamespace)
 	if providerSystemNamespace == "" {
@@ -248,6 +250,8 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		WithInterval(10 * time.Second).
 		WithTimeout(30 * time.Minute)
 
+	var onboardingCluster *clusters.Cluster
+	// ocp-gen:if WATCH=onboarding
 	onboardingClusterPermissions := []clustersv1alpha1.PermissionsRequest{
 		{
 			Rules: []rbacv1.PolicyRule{
@@ -264,13 +268,18 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error creating/updating onboarding cluster: %w", err)
 	}
+	// ocp-gen:fi
 
 	webhookServer := webhook.NewServer(webhook.Options{
 		TLSOpts: o.WebhookTLSOpts,
 	})
+	cluster := o.PlatformCluster
+	// ocp-gen:if WATCH=onboarding
+	cluster = onboardingCluster
+	// ocp-gen:fi
 
-	mgr, err := ctrl.NewManager(onboardingCluster.RESTConfig(), ctrl.Options{
-		Scheme:                 onboardingCluster.Scheme(),
+	mgr, err := ctrl.NewManager(cluster.RESTConfig(), ctrl.Options{
+		Scheme:                 cluster.Scheme(),
 		Metrics:                o.MetricsServerOptions,
 		WebhookServer:          webhookServer,
 		HealthProbeBindAddress: o.ProbeAddr,
@@ -332,6 +341,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	return nil
 }
 
+// ocp-gen:if WATCH=onboarding
 func requestOnboardingClusterAccess(ctx context.Context, mgr clusteraccess.Manager, platformCluster *clusters.Cluster, onboardingScheme *runtime.Scheme, permissions []clustersv1alpha1.PermissionsRequest, cmdSuffix string) (*clusters.Cluster, error) {
 	cluster, err := mgr.CreateAndWaitForCluster(ctx, "onboarding-"+cmdSuffix,
 		clustersv1alpha1.PURPOSE_ONBOARDING, onboardingScheme, permissions)
@@ -361,3 +371,5 @@ func debugEnabled() bool {
 	v := strings.ToLower(os.Getenv(debugEnvVar))
 	return v == "1" || v == "true"
 }
+
+// ocp-gen:fi

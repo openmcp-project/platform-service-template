@@ -46,9 +46,16 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 	// 1. get obj
 	// ocp-gen:replace Foo=KIND
 	obj := &v1alpha1.Foo{}
+	// ocp-gen:if WATCH=onboarding
 	if err := r.onboardingCluster.Client().Get(ctx, req.NamespacedName, obj); err != nil {
 		return reconcile.Result{}, client.IgnoreNotFound(err)
 	}
+	// ocp-gen:fi
+	// ocp-gen:if WATCH=platform
+	if err := r.platformCluster.Client().Get(ctx, req.NamespacedName, obj); err != nil {
+		return reconcile.Result{}, client.IgnoreNotFound(err)
+	}
+	// ocp-gen:fi
 	// handle operation annotation
 	if obj.GetAnnotations() != nil {
 		op, ok := obj.GetAnnotations()[apiconst.OperationAnnotation]
@@ -58,9 +65,16 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 				log.Info("Ignoring resource with operation annotation")
 				return reconcile.Result{}, nil
 			case apiconst.OperationAnnotationValueReconcile:
+				// ocp-gen:if WATCH=onboarding
 				if err := ctrlutils.EnsureAnnotation(ctx, r.onboardingCluster.Client(), obj, apiconst.OperationAnnotation, "", true, ctrlutils.DELETE); err != nil {
 					return reconcile.Result{}, fmt.Errorf("error removing operation annotation: %w", err)
 				}
+				// ocp-gen:fi
+				// ocp-gen:if WATCH=platform
+				if err := ctrlutils.EnsureAnnotation(ctx, r.platformCluster.Client(), obj, apiconst.OperationAnnotation, "", true, ctrlutils.DELETE); err != nil {
+					return reconcile.Result{}, fmt.Errorf("error removing operation annotation: %w", err)
+				}
+				// ocp-gen:fi
 				log.Info("Manual reconciliation triggered with operation annotation")
 			}
 		}
@@ -82,16 +96,22 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		// ocp-gen:replace Foo=KIND
 		For(&v1alpha1.Foo{}).
+		// ocp-gen:if WATCH=platform
+		Owns(&v1alpha1.ProviderConfig{}).
+		// ocp-gen:fi
+		// ocp-gen:if WATCH=onboarding
 		WatchesRawSource(source.Kind(
 			r.platformCluster.Cluster().GetCache(),
 			&v1alpha1.ProviderConfig{},
 			handler.TypedEnqueueRequestsFromMapFunc(r.enqueueAll()),
 			ctrlutils.ToTypedPredicate[*v1alpha1.ProviderConfig](ctrlutils.ExactNamePredicate(r.providerName, "")),
 		)).
+		// ocp-gen:fi
 		Named(r.providerName).
 		Complete(r)
 }
 
+// ocp-gen:if WATCH=onboarding
 // ocp-gen:replace Foo=KIND
 // create a reconcile.Request for every existing Foo object on provider config changes.
 // ocp-gen:replace Foo=KIND
@@ -113,3 +133,5 @@ func (r *FooReconciler) enqueueAll() func(ctx context.Context, _ *v1alpha1.Provi
 		return reqs
 	}
 }
+
+// ocp-gen:fi

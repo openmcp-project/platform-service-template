@@ -82,10 +82,12 @@ func (o *InitOptions) Run(ctx context.Context) error {
 	log.Info("Environment", "value", o.Environment)
 	log.Info("ProviderName", "value", o.ProviderName)
 
+	// ocp-gen:if WATCH=onboarding
 	log.Info("Getting access to the onboarding cluster")
 	onboardingScheme := runtime.NewScheme()
 	providerscheme.InstallOperatorAPIsOnboarding(onboardingScheme)
 	providerscheme.InstallCRDAPIs(onboardingScheme)
+	// ocp-gen:fi
 
 	providerSystemNamespace := os.Getenv(openmcpconst.EnvVariablePodNamespace)
 	if providerSystemNamespace == "" {
@@ -97,6 +99,7 @@ func (o *InitOptions) Run(ctx context.Context) error {
 		WithInterval(10 * time.Second).
 		WithTimeout(30 * time.Minute)
 
+	// ocp-gen:if WATCH=onboarding
 	onboardingCluster, err := clusterAccessManager.CreateAndWaitForCluster(ctx, clustersv1alpha1.PURPOSE_ONBOARDING+"-init", clustersv1alpha1.PURPOSE_ONBOARDING,
 		onboardingScheme, []clustersv1alpha1.PermissionsRequest{
 			{
@@ -113,12 +116,15 @@ func (o *InitOptions) Run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error creating/updating onboarding cluster: %w", err)
 	}
+	// ocp-gen:fi
 
 	// apply CRDs
 	log.Info("Creating/updating CRDs")
 	crdManager := crdutil.NewCRDManager(openmcpconst.ClusterLabel, crds.CRDs)
 	crdManager.AddCRDLabelToClusterMapping(clustersv1alpha1.PURPOSE_PLATFORM, o.PlatformCluster)
+	// ocp-gen:if WATCH=onboarding
 	crdManager.AddCRDLabelToClusterMapping(clustersv1alpha1.PURPOSE_ONBOARDING, onboardingCluster)
+	// ocp-gen:fi
 	if err := crdManager.CreateOrUpdateCRDs(ctx, &log); err != nil {
 		return fmt.Errorf("error creating/updating CRDs: %w", err)
 	}
