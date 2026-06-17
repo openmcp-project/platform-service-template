@@ -37,7 +37,7 @@ Add `dryrun=true` to print the result without applying the changes to disk.
 
 `template:generate-service` supports the following arguments:
 
-- `dry-run`: Print in-memory result to stdout without altering any files (default true)
+- `dryrun`: Print in-memory result to stdout without altering any files (default true)
 - `name`: Name of the platform service (default "example")
 - `api`: Name of the API to create on the watched cluster (default "Example")
 - `watch`: The cluster to watch, allowed values are "platform" or "onboarding" (default "platform")
