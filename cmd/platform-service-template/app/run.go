@@ -39,7 +39,10 @@ import (
 	"github.com/openmcp-project/platform-service-template/internal/controller"
 )
 
+// opencontrolplane-gen:if WATCH=onboarding
 const debugEnvVar = "DEV_DEBUG"
+
+// opencontrolplane-gen:fi
 
 var setupLog logging.Logger
 
