@@ -116,7 +116,10 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 // opencontrolplane-gen:replace Foo=KIND
 func (r *FooReconciler) enqueueAll() func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
 	return func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
-		cl := r.platformCluster.Client()
+		var cl client.Client
+		// opencontrolplane-gen:if WATCH=platform
+		cl = r.platformCluster.Client()
+		// opencontrolplane-gen:fi
 		// opencontrolplane-gen:if WATCH=onboarding
 		cl = r.onboardingCluster.Client()
 		// opencontrolplane-gen:fi

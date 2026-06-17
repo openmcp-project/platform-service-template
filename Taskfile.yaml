@@ -35,6 +35,7 @@ tasks:
         vars:
           dryrun: "false"
           watch: "{{.watch}}"
+          ci: "true"
       - task: build:img:build-test
       - go test -v ./test/e2e/... -count=1
 
@@ -44,9 +45,9 @@ tasks:
       debug: '{{.debug | default "false"}}'
       dryrun: '{{.dryrun | default "true"}}'
       api: '{{.api | default "Example"}}'
-      name: '{{.name | default "example"}}'
+      name: '{{.name | default "template"}}'
       watch: '{{.watch | default "platform"}}'
-      module: '{{.module | default "github.com/openmcp-project/platform-service-example"}}'
+      module: '{{.module | default "github.com/openmcp-project/platform-service-template"}}'
       ci: '{{.ci | default "false"}}'
     env:
       DEBUG: "{{ .debug }}"
