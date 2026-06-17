@@ -32,12 +32,12 @@ func TestPlatformService(t *testing.T) {
 					return ctx
 				}
 				// opencontrolplane-gen:fi
-				v1alpha1.AddToScheme(config.GetClient().Resources().GetScheme())
+				v1alpha1.AddToScheme(config.Client().Resources().GetScheme())
 				// opencontrolplane-gen:replace Foo=KIND
 				api := &v1alpha1.Foo{}
 				api.SetName("test")
 				api.SetNamespace(metav1.NamespaceDefault)
-				if err := config.GetClient().Resources().Create(ctx, api); err != nil {
+				if err := config.Client().Resources().Create(ctx, api); err != nil {
 					// opencontrolplane-gen:replace Foo=KIND
 					t.Errorf("failed to create Foo object: %v", err)
 				}
@@ -53,10 +53,10 @@ func TestPlatformService(t *testing.T) {
 					return ctx
 				}
 				// opencontrolplane-gen:fi
-				v1alpha1.AddToScheme(config.GetClient().Resources().GetScheme())
+				v1alpha1.AddToScheme(config.Client().Resources().GetScheme())
 				// opencontrolplane-gen:replace Foo=KIND
 				apiList := &v1alpha1.FooList{}
-				if err := config.GetClient().Resources().List(ctx, apiList); err != nil {
+				if err := config.Client().Resources().List(ctx, apiList); err != nil {
 					t.Error(err)
 					return ctx
 				}
