@@ -93,20 +93,26 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 
 // opencontrolplane-gen:replace Foo=KIND
 func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
-	secondaryWatchCache := r.platformCluster.Cluster().GetCache() //nolint:ineffassign,staticcheck
-	// opencontrolplane-gen:if WATCH=onboarding
-	secondaryWatchCache = r.onboardingCluster.Cluster().GetCache()
-	// opencontrolplane-gen:fi
 	return ctrl.NewControllerManagedBy(mgr).
 		// opencontrolplane-gen:replace Foo=KIND
 		For(&v1alpha1.Foo{}).
 		Owns(&v1alpha1.ProviderConfig{}).
+		// opencontrolplane-gen:if WATCH=onboarding
 		WatchesRawSource(source.Kind(
-			secondaryWatchCache,
+			r.onboardingCluster.Cluster().GetCache(),
 			&v1alpha1.ProviderConfig{},
 			handler.TypedEnqueueRequestsFromMapFunc(r.enqueueAll()),
 			ctrlutils.ToTypedPredicate[*v1alpha1.ProviderConfig](ctrlutils.ExactNamePredicate(r.providerName, "")),
 		)).
+		// opencontrolplane-gen:fi
+		// opencontrolplane-gen:if WATCH=platform
+		WatchesRawSource(source.Kind(
+			r.platformCluster.Cluster().GetCache(),
+			&v1alpha1.ProviderConfig{},
+			handler.TypedEnqueueRequestsFromMapFunc(r.enqueueAll()),
+			ctrlutils.ToTypedPredicate[*v1alpha1.ProviderConfig](ctrlutils.ExactNamePredicate(r.providerName, "")),
+		)).
+		// opencontrolplane-gen:fi
 		Named(r.providerName).
 		Complete(r)
 }
