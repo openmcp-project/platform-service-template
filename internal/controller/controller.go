@@ -116,20 +116,22 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 // opencontrolplane-gen:replace Foo=KIND
 func (r *FooReconciler) enqueueAll() func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
 	return func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
-		var cl client.Client
-		// opencontrolplane-gen:if WATCH=platform
-		cl = r.platformCluster.Client()
-		// opencontrolplane-gen:fi
-		// opencontrolplane-gen:if WATCH=onboarding
-		cl = r.onboardingCluster.Client()
-		// opencontrolplane-gen:fi
 		// opencontrolplane-gen:replace Foo=KIND
 		list := &v1alpha1.FooList{}
-		if err := cl.List(ctx, list); err != nil {
+		// opencontrolplane-gen:if WATCH=platform
+		if err := r.platformCluster.Client().List(ctx, list); err != nil {
 			// opencontrolplane-gen:replace foo=KIND
 			logf.FromContext(ctx).Error(err, "failed to list Foo objects")
 			return nil
 		}
+		// opencontrolplane-gen:fi
+		// opencontrolplane-gen:if WATCH=onboarding
+		if err := r.platformCluster.Client().List(ctx, list); err != nil {
+			// opencontrolplane-gen:replace foo=KIND
+			logf.FromContext(ctx).Error(err, "failed to list Foo objects")
+			return nil
+		}
+		// opencontrolplane-gen:fi
 		reqs := make([]reconcile.Request, 0, len(list.Items))
 		for _, obj := range list.Items {
 			reqs = append(reqs, reconcile.Request{
