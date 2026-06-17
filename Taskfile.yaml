@@ -28,7 +28,12 @@ tasks:
 
   test-e2e:
     desc: "Build image and run e2e tests"
+    vars:
+      watch: '{{.watch | default "platform"}}'
     cmds:
+      - task: generate-service 
+        vars:
+          watch: "{{.watch}}"
       - task: build:img:build-test
       - go test -v ./test/e2e/... -count=1
 
@@ -38,9 +43,9 @@ tasks:
       debug: '{{.debug | default "false"}}'
       dryrun: '{{.dryrun | default "true"}}'
       api: '{{.api | default "Example"}}'
-      name: '{{.name | default "example"}}'
+      name: '{{.name | default "template"}}'
       watch: '{{.watch | default "platform"}}'
-      module: '{{.module | default "github.com/openmcp-project/platform-service-example"}}'
+      module: '{{.module | default "github.com/openmcp-project/platform-service-template"}}'
     env:
       DEBUG: "{{ .debug }}"
       KIND: "{{ .api }}"

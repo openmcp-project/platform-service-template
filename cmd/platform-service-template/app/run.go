@@ -273,7 +273,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	webhookServer := webhook.NewServer(webhook.Options{
 		TLSOpts: o.WebhookTLSOpts,
 	})
-	cluster := o.PlatformCluster
+	cluster := o.PlatformCluster //nolint:ineffassign,staticcheck
 	// opencontrolplane-gen:if WATCH=onboarding
 	cluster = onboardingCluster
 	// opencontrolplane-gen:fi

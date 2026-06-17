@@ -93,7 +93,7 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 
 // opencontrolplane-gen:replace Foo=KIND
 func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
-	secondaryWatchCache := r.platformCluster.Cluster().GetCache()
+	secondaryWatchCache := r.platformCluster.Cluster().GetCache() //nolint:ineffassign,staticcheck
 	// ocp-gen:if WATCH=onboarding
 	secondaryWatchCache = r.onboardingCluster.Cluster().GetCache()
 	// ocp-gen:fi
@@ -117,9 +117,9 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 func (r *FooReconciler) enqueueAll() func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
 	return func(ctx context.Context, _ *v1alpha1.ProviderConfig) []reconcile.Request {
 		cl := r.platformCluster.Client()
-		// ocp-gen:if WATCH=onboarding
+		// opencontrolplane-gen:if WATCH=onboarding
 		cl = r.onboardingCluster.Client()
-		// ocp-gen:fi
+		// opencontrolplane-gen:fi
 		// opencontrolplane-gen:replace Foo=KIND
 		list := &v1alpha1.FooList{}
 		if err := cl.List(ctx, list); err != nil {
