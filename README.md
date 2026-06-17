@@ -9,43 +9,54 @@ A template for building @openmcp-project Platform Services.
 ## Requirements and Setup
 
 1. Create a new repository based on this template.
-2. Use `task generate-service` to create a new Platform Service.
+2. Use `task template:generate-service` to create a new Platform Service.
 3. Test your Platform Service with `task test-e2e`.
 
-The template provides a basic Platform Service with a Config and API CRD (see design docs TODO).
-
-To adjust the service and API name, use:
-
-```shell
-task generate-service module=github.com/myorg/my-platform-service kind=MyKind
-```
-
-By default `task generate-service` will print the in-memory result to sdtout instead of writing changes to the filesystem.
+The template generates a basic Platform Service with a Config and API CRD (see [docs](design.md)).
 
 For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
 
-## CLI Flags
+## Template Taskfiles
 
-### task generate-service Flags
+This template contains two Taskfiles:
 
-`task generate-service` supports the following flags:
+- Taskfile.yaml contains the tasks to use once you created a Platform Service based on this template.
+- Taskfile_template.yaml contains the tasks to use while working with the template. This Taskfile can be removed once you used this template to create a Platform Service.
+
+The following sections give a brief overview of the template specific tasks.
+
+### User tasks
+
+To generate a new Platform Service, use `task template:generate-service`:
 
 ```shell
-  -debug bool
-        print debug logs instead of in-memory transformation result (default false)
-  -dry-run bool
-        print in-memory result to stdout without altering any files (default true)
-  -kind string
-        the name of the API to on the watched cluster (default "Example")
-  -name string
-        the name of the platform service (default "example")
-  -module string
-        the go module name of your platform service (default "github.com/openmcp-project/platform-service-example")
-  -watch string
-        the cluster to watch, allowed values are "platform" or "onboarding" (default "platform")
+task template:generate-service name=foo api=Foo watch=platform module=github.com/yourorg/platform-service-foo
 ```
 
-### Platform Service Runtime Flags
+Add `dryrun=true` to print the result without applying the changes to disk.
+
+`template:generate-service` supports the following arguments:
+
+- `dry-run`: Print in-memory result to stdout without altering any files (default true)
+- `name`: Name of the platform service (default "example")
+- `api`: Name of the API to create on the watched cluster (default "Example")
+- `watch`: The cluster to watch, allowed values are "platform" or "onboarding" (default "platform")
+- `module` The go module name of your platform service (default "github.com/openmcp-project/platform-service-example")
+
+### Development tasks
+
+The following tasks are useful to test any template code changes.
+
+- `template:dev:gen`: Executes the template with the default values to render "platform-service-example" for local development.
+- `template:dev:img`: Builds a container image for "platform-service-example". This also includes code validating.
+- `template:dev:e2e`: Executes e2e tests for "platform-service-example".
+
+All `template:dev` tasks support the following arguments:
+
+- `watch`: defines where the platform service API is created. Supported values are "platform" and "onboarding" (default "platform")
+- `debug`: enables debug logs of [opencontrolplane-gen](https://github.com/openmcp-project/opencontrolplane-gen).
+
+## Platform Service Runtime Flags
 
 The generated platform service supports the following runtime flags:
 

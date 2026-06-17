@@ -39,8 +39,9 @@ func TestMain(m *testing.M) {
 		},
 		PlatformServices: []platformservices.PlatformServiceSetup{
 			{
-				// opencontrolplane-gen:replace foo=SERVICE_NAME_LOWER
-				Name:               "foo",
+				// opencontrolplane-gen:replace foo=SERVICE_NAME
+				Name: "foo",
+				// opencontrolplane-gen:replace template=SERVICE_NAME
 				Image:              fmt.Sprintf("ghcr.io/openmcp-project/images/platform-service-template:%s", version),
 				LoadImageToCluster: true,
 			},
