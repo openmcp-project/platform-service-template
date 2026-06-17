@@ -94,9 +94,9 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 // opencontrolplane-gen:replace Foo=KIND
 func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 	secondaryWatchCache := r.platformCluster.Cluster().GetCache() //nolint:ineffassign,staticcheck
-	// ocp-gen:if WATCH=onboarding
+	// opencontrolplane-gen:if WATCH=onboarding
 	secondaryWatchCache = r.onboardingCluster.Cluster().GetCache()
-	// ocp-gen:fi
+	// opencontrolplane-gen:fi
 	return ctrl.NewControllerManagedBy(mgr).
 		// opencontrolplane-gen:replace Foo=KIND
 		For(&v1alpha1.Foo{}).
