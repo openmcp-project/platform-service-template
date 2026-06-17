@@ -11,7 +11,9 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
+	// opencontrolplane-gen:if WATCH=onboarding
 	"github.com/openmcp-project/openmcp-testing/pkg/clusterutils"
+	// opencontrolplane-gen:fi
 	"github.com/openmcp-project/openmcp-testing/pkg/resources"
 
 	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE

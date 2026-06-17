@@ -33,6 +33,7 @@ tasks:
     cmds:
       - task: generate-service 
         vars:
+          dryrun: "false"
           watch: "{{.watch}}"
       - task: build:img:build-test
       - go test -v ./test/e2e/... -count=1
@@ -43,9 +44,10 @@ tasks:
       debug: '{{.debug | default "false"}}'
       dryrun: '{{.dryrun | default "true"}}'
       api: '{{.api | default "Example"}}'
-      name: '{{.name | default "template"}}'
+      name: '{{.name | default "example"}}'
       watch: '{{.watch | default "platform"}}'
-      module: '{{.module | default "github.com/openmcp-project/platform-service-template"}}'
+      module: '{{.module | default "github.com/openmcp-project/platform-service-example"}}'
+      ci: '{{.ci | default "false"}}'
     env:
       DEBUG: "{{ .debug }}"
       KIND: "{{ .api }}"
@@ -58,6 +60,6 @@ tasks:
     cmds:
       - DRY_RUN={{.dryrun}} go generate ./...
       - cmd: mv ./cmd/platform-service-template ./cmd/${CMD_FOLDER}
-        if: '{{ eq .dryrun "false" }}'
+        if: '{{ and (eq .dryrun "false") (eq .ci "false") }}'
       - cmd: go mod edit -module {{.module}}
-        if: '{{ eq .dryrun "false" }}'
+        if: '{{ and (eq .dryrun "false") (eq .ci "false") }}'
