@@ -1,4 +1,4 @@
-//go:generate ocp-gen
+//go:generate opencontrolplane-gen
 package app
 
 import (
@@ -31,11 +31,11 @@ import (
 	openmcpconst "github.com/openmcp-project/openmcp-operator/api/constants"
 	"github.com/openmcp-project/openmcp-operator/lib/clusteraccess"
 
-	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
+	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/providerscheme"
-	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
+	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
-	// ocp-gen:replace github.com/openmcp-project/platform-service-template=MODULE
+	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/internal/controller"
 )
 
@@ -235,10 +235,10 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("ProviderConfig '%s' is invalid: %w", svcCfg.Name, err)
 	}
 
-	// ocp-gen:if WATCH=onboarding
+	// opencontrolplane-gen:if WATCH=onboarding
 	setupLog.Info("Getting access to the onboarding cluster")
 	onboardingScheme := providerscheme.InstallOperatorAPIsOnboarding(runtime.NewScheme())
-	// ocp-gen:fi
+	// opencontrolplane-gen:fi
 
 	providerSystemNamespace := os.Getenv(openmcpconst.EnvVariablePodNamespace)
 	if providerSystemNamespace == "" {
@@ -251,13 +251,13 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		WithTimeout(30 * time.Minute)
 
 	var onboardingCluster *clusters.Cluster
-	// ocp-gen:if WATCH=onboarding
+	// opencontrolplane-gen:if WATCH=onboarding
 	onboardingClusterPermissions := []clustersv1alpha1.PermissionsRequest{
 		{
 			Rules: []rbacv1.PolicyRule{
 				{
 					APIGroups: []string{v1alpha1.GroupVersion.Group},
-					// ocp-gen:replace foo=KIND_LOWER
+					// opencontrolplane-gen:replace foo=KIND_LOWER
 					Resources: []string{"foos"},
 					Verbs:     []string{"*"},
 				},
@@ -268,15 +268,15 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error creating/updating onboarding cluster: %w", err)
 	}
-	// ocp-gen:fi
+	// opencontrolplane-gen:fi
 
 	webhookServer := webhook.NewServer(webhook.Options{
 		TLSOpts: o.WebhookTLSOpts,
 	})
 	cluster := o.PlatformCluster
-	// ocp-gen:if WATCH=onboarding
+	// opencontrolplane-gen:if WATCH=onboarding
 	cluster = onboardingCluster
-	// ocp-gen:fi
+	// opencontrolplane-gen:fi
 
 	mgr, err := ctrl.NewManager(cluster.RESTConfig(), ctrl.Options{
 		Scheme:                 cluster.Scheme(),
@@ -285,7 +285,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		HealthProbeBindAddress: o.ProbeAddr,
 		PprofBindAddress:       o.PprofAddr,
 		LeaderElection:         o.EnableLeaderElection,
-		// ocp-gen:replace foo=KIND_LOWER
+		// opencontrolplane-gen:replace foo=KIND_LOWER
 		LeaderElectionID: "github.com/openmcp-project/platform-service-foo",
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
@@ -306,9 +306,9 @@ func (o *RunOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("unable to add platform cluster to manager: %w", err)
 	}
 
-	// ocp-gen:replace Foo=KIND
+	// opencontrolplane-gen:replace Foo=KIND
 	if err := controller.NewFooReconciler(o.PlatformCluster, onboardingCluster, o.ProviderName).SetupWithManager(mgr); err != nil {
-		// ocp-gen:replace Foo=KIND
+		// opencontrolplane-gen:replace Foo=KIND
 		return fmt.Errorf("unable to add FooReconciler to manager: %w", err)
 	}
 
@@ -341,7 +341,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	return nil
 }
 
-// ocp-gen:if WATCH=onboarding
+// opencontrolplane-gen:if WATCH=onboarding
 func requestOnboardingClusterAccess(ctx context.Context, mgr clusteraccess.Manager, platformCluster *clusters.Cluster, onboardingScheme *runtime.Scheme, permissions []clustersv1alpha1.PermissionsRequest, cmdSuffix string) (*clusters.Cluster, error) {
 	cluster, err := mgr.CreateAndWaitForCluster(ctx, "onboarding-"+cmdSuffix,
 		clustersv1alpha1.PURPOSE_ONBOARDING, onboardingScheme, permissions)
@@ -372,4 +372,4 @@ func debugEnabled() bool {
 	return v == "1" || v == "true"
 }
 
-// ocp-gen:fi
+// opencontrolplane-gen:fi

@@ -33,7 +33,7 @@ tasks:
       - go test -v ./test/e2e/... -count=1
 
   generate-service:
-    desc: "Generate Platform Service with ocp-gen transformation"
+    desc: "Generate Platform Service with opencontrolplane-gen transformation"
     vars:
       debug: '{{.debug | default "false"}}'
       dryrun: '{{.dryrun | default "true"}}'
@@ -47,7 +47,7 @@ tasks:
       KIND_LOWER: "{{ lower .api }}"
       SERVICE_NAME: "{{ .name }}"
       SERVICE_NAME_LOWER: "{{ lower .name }}"
-      WATCH: '{{ lower .watch }}'
+      WATCH: "{{ lower .watch }}"
       CMD_FOLDER: "platform-service-{{ lower .name }}"
       MODULE: "{{ .module }}"
     cmds:
