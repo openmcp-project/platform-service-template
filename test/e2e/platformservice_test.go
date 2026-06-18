@@ -14,9 +14,9 @@ import (
 
 	// opencontrolplane-gen:if WATCH=onboarding
 	"github.com/openmcp-project/openmcp-testing/pkg/clusterutils"
+	// opencontrolplane-gen:fi
 	openmcpconditions "github.com/openmcp-project/openmcp-testing/pkg/conditions"
 
-	// opencontrolplane-gen:fi
 	"github.com/openmcp-project/openmcp-testing/pkg/resources"
 
 	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE
