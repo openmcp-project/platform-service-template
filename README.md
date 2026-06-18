@@ -13,7 +13,7 @@ A template for building @openmcp-project Platform Services.
 3. Use `task template:generate-service` to create a new Platform Service.
 4. Test your Platform Service with `task test-e2e`.
 
-The template generates a basic Platform Service with a Config and API CRD (see [docs](design.md)).
+The template generates a basic Platform Service with a [Config](https://open-control-plane.io/developers/platformservice/design#config) and [API](https://open-control-plane.io/developers/platformservice/design#api) CRD.
 
 For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
 
