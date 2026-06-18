@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/e2e-framework/klient/wait"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
@@ -13,6 +14,8 @@ import (
 
 	// opencontrolplane-gen:if WATCH=onboarding
 	"github.com/openmcp-project/openmcp-testing/pkg/clusterutils"
+	openmcpconditions "github.com/openmcp-project/openmcp-testing/pkg/conditions"
+
 	// opencontrolplane-gen:fi
 	"github.com/openmcp-project/openmcp-testing/pkg/resources"
 
@@ -22,6 +25,16 @@ import (
 
 func TestPlatformService(t *testing.T) {
 	basicPlatformServiceTest := features.New("provider test").
+		Setup(func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			v1alpha1.AddToScheme(c.Client().Resources().GetScheme())
+			config := &v1alpha1.ProviderConfig{}
+			// opencontrolplane-gen:replace configname=SERVICE_NAME
+			config.SetName("configname")
+			if err := c.Client().Resources().Create(ctx, config); err != nil {
+				t.Errorf("failed to create ProviderConfig object: %v", err)
+			}
+			return ctx
+		}).
 		Assess("verify service can be successfully consumed",
 			func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 				config := c
@@ -40,6 +53,9 @@ func TestPlatformService(t *testing.T) {
 				if err := config.Client().Resources().Create(ctx, api); err != nil {
 					// opencontrolplane-gen:replace Foo=KIND
 					t.Errorf("failed to create Foo object: %v", err)
+				}
+				if err := wait.For(openmcpconditions.Match(api, config, "Ready", corev1.ConditionTrue)); err != nil {
+					t.Error(err)
 				}
 				return ctx
 			}).

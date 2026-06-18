@@ -18,6 +18,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	commonapi "github.com/openmcp-project/openmcp-operator/api/common"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -41,6 +42,13 @@ type FooSpec struct {
 }
 
 // opencontrolplane-gen:replace Foo=KIND
+// FooStatus defines the observed state of Foo
+// opencontrolplane-gen:replace Foo=KIND
+type FooStatus struct {
+	commonapi.Status `json:",inline"`
+}
+
+// opencontrolplane-gen:replace Foo=KIND
 // Foo is the Schema for the Foo API
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
@@ -61,6 +69,12 @@ type Foo struct {
 	// +required
 	// opencontrolplane-gen:replace Foo=KIND
 	Spec FooSpec `json:"spec"`
+
+	// opencontrolplane-gen:replace Foo=KIND
+	// status defines the observed state of Foo
+	// +optional
+	// opencontrolplane-gen:replace Foo=KIND
+	Status FooStatus `json:"status,omitempty,omitzero"`
 }
 
 // +kubebuilder:object:root=true

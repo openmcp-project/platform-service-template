@@ -8,10 +8,8 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	rbacv1 "k8s.io/api/rbac/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 
 	crdutil "github.com/openmcp-project/controller-utils/pkg/crds"
@@ -24,8 +22,6 @@ import (
 	"github.com/openmcp-project/platform-service-template/api/crds"
 	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE
 	"github.com/openmcp-project/platform-service-template/api/providerscheme"
-	// opencontrolplane-gen:replace github.com/openmcp-project/platform-service-template=MODULE
-	"github.com/openmcp-project/platform-service-template/api/v1alpha1"
 )
 
 func NewInitCommand(so *SharedOptions) *cobra.Command {
@@ -127,19 +123,6 @@ func (o *InitOptions) Run(ctx context.Context) error {
 	// opencontrolplane-gen:fi
 	if err := crdManager.CreateOrUpdateCRDs(ctx, &log); err != nil {
 		return fmt.Errorf("error creating/updating CRDs: %w", err)
-	}
-
-	log.Info("Lookup ProviderConfig")
-	svcCfg := &v1alpha1.ProviderConfig{}
-	svcCfg.Name = o.ProviderName
-	if err := o.PlatformCluster.Client().Get(ctx, client.ObjectKeyFromObject(svcCfg), svcCfg); err != nil {
-		if apierrors.IsNotFound(err) {
-			log.Info("Create default ProviderConfig")
-			if err := o.PlatformCluster.Client().Create(ctx, svcCfg); err != nil {
-				return fmt.Errorf("error creating default ProviderConfig '%s': %w", svcCfg.Name, err)
-			}
-		}
-		return fmt.Errorf("error getting ProviderConfig '%s': %w", svcCfg.Name, err)
 	}
 
 	log.Info("Finished init command")

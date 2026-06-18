@@ -13,7 +13,6 @@ import (
 	"github.com/spf13/cobra"
 
 	rbacv1 "k8s.io/api/rbac/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -224,20 +223,6 @@ func (o *RunOptions) Run(ctx context.Context) error {
 	setupLog.Info("Environment", "value", o.Environment)
 	setupLog.Info("ProviderName", "value", o.ProviderName)
 
-	// verify ProviderConfig existence
-	// This also happens in the reconcile, but then the pod will look healthy while it is actually not able to reconcile anything.
-	svcCfg := &v1alpha1.ProviderConfig{}
-	svcCfg.Name = o.ProviderName
-	if err := o.PlatformCluster.Client().Get(ctx, client.ObjectKeyFromObject(svcCfg), svcCfg); err != nil {
-		if apierrors.IsNotFound(err) {
-			return fmt.Errorf("ProviderConfig '%s' not found: %w", svcCfg.Name, err)
-		}
-		return fmt.Errorf("error getting ProviderConfig '%s': %w", svcCfg.Name, err)
-	}
-	if err := svcCfg.Spec.Validate(); err != nil {
-		return fmt.Errorf("ProviderConfig '%s' is invalid: %w", svcCfg.Name, err)
-	}
-
 	// opencontrolplane-gen:if WATCH=onboarding
 	setupLog.Info("Getting access to the onboarding cluster")
 	onboardingScheme := providerscheme.InstallOperatorAPIsOnboarding(runtime.NewScheme())
@@ -261,7 +246,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 				{
 					APIGroups: []string{v1alpha1.GroupVersion.Group},
 					// opencontrolplane-gen:replace foo=KIND_LOWER
-					Resources: []string{"foos"},
+					Resources: []string{"foos", "foos/status"},
 					Verbs:     []string{"*"},
 				},
 			},

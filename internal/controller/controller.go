@@ -21,6 +21,8 @@ import (
 	ctrlutils "github.com/openmcp-project/controller-utils/pkg/controller"
 	apiconst "github.com/openmcp-project/openmcp-operator/api/constants"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // opencontrolplane-gen:replace Foo=KIND
@@ -87,7 +89,31 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 		}
 		return reconcile.Result{}, client.IgnoreNotFound(err)
 	}
-	// 3. TODO: reconcile obj
+	// 3. TODO: reconcile obj and report status
+	if len(obj.Status.Conditions) == 0 {
+		meta.SetStatusCondition(&obj.Status.Conditions, metav1.Condition{
+			Type:    "Ready",
+			Status:  metav1.ConditionTrue,
+			Reason:  "ReconcileSuccess",
+			Message: "Platform Service is ready",
+		})
+		obj.Status.ObservedGeneration = obj.GetGeneration()
+		obj.Status.Phase = "Ready"
+	}
+	// opencontrolplane-gen:if WATCH=platform
+	if err := r.platformCluster.Client().Status().Update(ctx, obj); err != nil {
+		// opencontrolplane-gen:replace Foo=KIND
+		log.Error(err, "Failed to update Foo status")
+		return ctrl.Result{}, err
+	}
+	// opencontrolplane-gen:fi
+	// opencontrolplane-gen:if WATCH=onboarding
+	if err := r.onboardingCluster.Client().Status().Update(ctx, obj); err != nil {
+		// opencontrolplane-gen:replace Foo=KIND
+		log.Error(err, "Failed to update Foo status")
+		return ctrl.Result{}, err
+	}
+	// opencontrolplane-gen:fi
 	return reconcile.Result{}, nil
 }
 
@@ -96,23 +122,12 @@ func (r *FooReconciler) SetupWithManager(mgr manager.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		// opencontrolplane-gen:replace Foo=KIND
 		For(&v1alpha1.Foo{}).
-		Owns(&v1alpha1.ProviderConfig{}).
-		// opencontrolplane-gen:if WATCH=onboarding
-		WatchesRawSource(source.Kind(
-			r.onboardingCluster.Cluster().GetCache(),
-			&v1alpha1.ProviderConfig{},
-			handler.TypedEnqueueRequestsFromMapFunc(r.enqueueAll()),
-			ctrlutils.ToTypedPredicate[*v1alpha1.ProviderConfig](ctrlutils.ExactNamePredicate(r.providerName, "")),
-		)).
-		// opencontrolplane-gen:fi
-		// opencontrolplane-gen:if WATCH=platform
 		WatchesRawSource(source.Kind(
 			r.platformCluster.Cluster().GetCache(),
 			&v1alpha1.ProviderConfig{},
 			handler.TypedEnqueueRequestsFromMapFunc(r.enqueueAll()),
 			ctrlutils.ToTypedPredicate[*v1alpha1.ProviderConfig](ctrlutils.ExactNamePredicate(r.providerName, "")),
 		)).
-		// opencontrolplane-gen:fi
 		Named(r.providerName).
 		Complete(r)
 }
