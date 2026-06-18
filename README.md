@@ -9,8 +9,9 @@ A template for building @openmcp-project Platform Services.
 ## Requirements and Setup
 
 1. Create a new repository based on this template.
-2. Use `task template:generate-service` to create a new Platform Service.
-3. Test your Platform Service with `task test-e2e`.
+2. Install [opencontrolplane-gen](https://github.com/openmcp-project/opencontrolplane-gen).
+3. Use `task template:generate-service` to create a new Platform Service.
+4. Test your Platform Service with `task test-e2e`.
 
 The template generates a basic Platform Service with a Config and API CRD (see [docs](design.md)).
 
