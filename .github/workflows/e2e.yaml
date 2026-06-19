@@ -29,12 +29,7 @@ jobs:
 
       - name: Install opencontrolplane-gen
         run: |
-          go install github.com/openmcp-project/opencontrolplane-gen@v1.0.1
-
-      - name: Test error matcher
-        run: |
-          echo install.go: saved changes
-          echo saved changes: install.go
+          go install github.com/openmcp-project/opencontrolplane-gen@v1.0.2
 
       - name: E2E Platform API
         run: |
@@ -62,7 +57,7 @@ jobs:
 
       - name: Install opencontrolplane-gen
         run: |
-          go install github.com/openmcp-project/opencontrolplane-gen@v1.0.1
+          go install github.com/openmcp-project/opencontrolplane-gen@v1.0.2
 
       - name: E2E Onboarding API
         run: |
