@@ -92,10 +92,11 @@ func (r *FooReconciler) Reconcile(ctx context.Context, req reconcile.Request) (r
 	// 3. TODO: reconcile obj and report status
 	if len(obj.Status.Conditions) == 0 {
 		meta.SetStatusCondition(&obj.Status.Conditions, metav1.Condition{
-			Type:    "Ready",
-			Status:  metav1.ConditionTrue,
-			Reason:  "ReconcileSuccess",
-			Message: "Platform Service is ready",
+			Type:   "Ready",
+			Status: metav1.ConditionTrue,
+			Reason: "ReconcileSuccess",
+			// opencontrolplane-gen:replace Foo=KIND
+			Message: "Foo is ready",
 		})
 		obj.Status.ObservedGeneration = obj.GetGeneration()
 		obj.Status.Phase = "Ready"
