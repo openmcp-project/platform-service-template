@@ -31,6 +31,11 @@ jobs:
         run: |
           go install github.com/openmcp-project/opencontrolplane-gen@v1.0.1
 
+      - name: Test error matcher
+        run: |
+          echo install.go: saved changes
+          echo saved changes: install.go
+
       - name: E2E Platform API
         run: |
           task template:dev:e2e watch=platform
