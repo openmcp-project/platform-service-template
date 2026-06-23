@@ -9,47 +9,57 @@ A template for building @openmcp-project Platform Services.
 ## Requirements and Setup
 
 1. Create a new repository based on this template.
-2. Execute the template to create a new Platform Service.
-3. Test your Platform Service.
+2. Install [opencontrolplane-gen](https://github.com/openmcp-project/opencontrolplane-gen).
+3. Use `task template:generate-service` to create a new Platform Service.
+4. Test your Platform Service with `task test-e2e`.
 
-The template includes a basic code generation command that lets you create a Platform Service for your Go module, API kind and group.
+The template generates a basic Platform Service with a [Config](https://open-control-plane.io/developers/platformservice/design#config) and [API](https://open-control-plane.io/developers/platformservice/design#api) CRD.
 
-For a complete usage overview with the default settings, run:
+For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://open-control-plane.io/developers/platformservice/develop).
+
+## Template Taskfiles
+
+This template contains two Taskfiles:
+
+- Taskfile.yaml contains the tasks to use once you created a Platform Service based on this template.
+- Taskfile_template.yaml contains the tasks to use while working with the template. This Taskfile can be removed once you used this template to create a Platform Service.
+
+The following sections give a brief overview of the template specific tasks.
+
+### User tasks
+
+To generate a new Platform Service, use `task template:generate-service`:
 
 ```shell
-go run ./cmd/template -h
+task template:generate-service name=foo api=Foo watch=platform module=github.com/yourorg/platform-service-foo
 ```
 
-Then execute the template, for example:
+Add `dryrun=true` to print the result without applying the changes to disk.
 
-```shell
-go run ./cmd/template -module github.com/yourorg/yourrepo -kind YourKind -group yourgroup
-```
+`template:generate-service` supports the following arguments:
 
-Running End-to-End tests:
+- `dryrun`: Print in-memory result to stdout without altering any files (default false)
+- `name`: Name of the platform service (default "example")
+- `api`: Name of the API to create on the watched cluster (default "Example")
+- `watch`: The cluster to watch, allowed values are "platform" or "onboarding" (default "platform")
+- `module` The go module name of your platform service (default "github.com/openmcp-project/platform-service-example")
 
-```shell
-task test-e2e
-```
+### Development tasks
 
-For a detailed guide on setup and usage, please refer to the full [Service Provider Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
+The following tasks are useful to test any template code changes.
 
-## CLI Flags
+- `template:dev:gen`: Executes the template with the default values to render "platform-service-example" for local development.
+- `template:dev:img`: Builds a container image for "platform-service-example". This also includes code validating.
+- `template:dev:e2e`: Executes e2e tests for "platform-service-example".
 
-### Template Generator Flags
+All `template:dev` tasks support the following arguments:
 
-The template generator (`cmd/template`) supports the following flags:
+- `watch`: defines where the platform service API is created. Supported values are "platform" and "onboarding" (default "platform")
+- `debug`: enables debug logs of [opencontrolplane-gen](https://github.com/openmcp-project/opencontrolplane-gen).
 
-- `-module`: Go module path (default: `github.com/openmcp-project/service-provider-template`)
-- `-kind`: GVK kind name (default: `FooService`)
-- `-group`: GVK group prefix, will be suffixed with `services.open-control-plane.io` (default: `foo`)
-- `-v`: Generate with sample code (default: `false`)
-- `-w`: Generate a service provider that reconciles its `DomainServiceAPI` on the [WorkloadCluster](https://openmcp-project.github.io/docs/about/design/service-provider#deployment-model) (default: `false`)
-- `-s`: Generate secret watcher implementation (default: `false`)
+## Platform Service Runtime Flags
 
-### Platform Service Runtime Flags
-
-The generated service provider supports the following runtime flags:
+The generated platform service supports the following runtime flags:
 
 - `--verbosity`: Logging verbosity level (see [controller-runtime logging](https://github.com/kubernetes-sigs/controller-runtime/blob/main/TMP-LOGGING.md))
 - `--environment`: Name of the environment (required for operation)

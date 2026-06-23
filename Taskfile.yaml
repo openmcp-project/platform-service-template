@@ -2,17 +2,19 @@ version: 3
 
 vars:
   NESTED_MODULES: api
-  API_DIRS: '{{.ROOT_DIR}}/api/v1alpha1/...'
-  MANIFEST_OUT: '{{.ROOT_DIR}}/api/crds/manifests'
-  CODE_DIRS: '{{.ROOT_DIR}}/cmd/... {{.ROOT_DIR}}/internal/... {{.ROOT_DIR}}/api/v1alpha1/...'
-  COMPONENTS: 'service-provider-template'
-  REPO_URL: 'https://github.com/openmcp-project/platform-service-template'
-  COMMON_SCRIPT_DIR: '{{.ROOT_DIR}}/hack/common'
+  API_DIRS: "{{.ROOT_DIR}}/api/v1alpha1/..."
+  MANIFEST_OUT: "{{.ROOT_DIR}}/api/crds/manifests"
+  CODE_DIRS: "{{.ROOT_DIR}}/cmd/... {{.ROOT_DIR}}/internal/... {{.ROOT_DIR}}/api/v1alpha1/..."
+  COMPONENTS: "platform-service-template"
+  REPO_URL: "https://github.com/openmcp-project/platform-service-template"
+  COMMON_SCRIPT_DIR: "{{.ROOT_DIR}}/hack/common"
 
 includes:
   shared:
     taskfile: hack/common/Taskfile_controller.yaml
     flatten: true
+  template:
+    taskfile: Taskfile_template.yaml
 
 tasks:
   build:img:build-test:
@@ -28,6 +30,8 @@ tasks:
 
   test-e2e:
     desc: "Build image and run e2e tests"
+    vars:
+      watch: '{{.watch | default "platform"}}'
     cmds:
       - task: build:img:build-test
       - go test -v ./test/e2e/... -count=1
