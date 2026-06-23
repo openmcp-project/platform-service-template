@@ -252,7 +252,7 @@ func (o *RunOptions) Run(ctx context.Context) error {
 			},
 		},
 	}
-	onboardingCluster, err := requestOnboardingClusterAccess(ctx, clusterAccessManager, o.PlatformCluster, onboardingScheme, onboardingClusterPermissions, "run")
+	onboardingCluster, err := requestOnboardingClusterAccess(ctx, clusterAccessManager, o.PlatformCluster, onboardingScheme, onboardingClusterPermissions, o.ProviderName)
 	if err != nil {
 		return fmt.Errorf("error creating/updating onboarding cluster: %w", err)
 	}
@@ -330,22 +330,21 @@ func (o *RunOptions) Run(ctx context.Context) error {
 }
 
 // opencontrolplane-gen:if WATCH=onboarding
-func requestOnboardingClusterAccess(ctx context.Context, mgr clusteraccess.Manager, platformCluster *clusters.Cluster, onboardingScheme *runtime.Scheme, permissions []clustersv1alpha1.PermissionsRequest, cmdSuffix string) (*clusters.Cluster, error) {
-	cluster, err := mgr.CreateAndWaitForCluster(ctx, "onboarding-"+cmdSuffix,
-		clustersv1alpha1.PURPOSE_ONBOARDING, onboardingScheme, permissions)
+func requestOnboardingClusterAccess(ctx context.Context, mgr clusteraccess.Manager, platformCluster *clusters.Cluster, onboardingScheme *runtime.Scheme, permissions []clustersv1alpha1.PermissionsRequest, providerName string) (*clusters.Cluster, error) {
+	cluster, err := mgr.CreateAndWaitForCluster(ctx, "onboarding-run", clustersv1alpha1.PURPOSE_ONBOARDING, onboardingScheme, permissions)
 	if err != nil {
 		return cluster, err
 	}
 	if debugEnabled() {
-		return patchOnboardingClient(ctx, platformCluster, cluster, "onboarding-"+cmdSuffix)
+		return patchOnboardingClient(ctx, platformCluster, cluster, providerName)
 	}
 	return cluster, nil
 }
 
-func patchOnboardingClient(ctx context.Context, platformCluster *clusters.Cluster, onboardingCluster *clusters.Cluster, cmdSuffix string) (*clusters.Cluster, error) {
+func patchOnboardingClient(ctx context.Context, platformCluster *clusters.Cluster, onboardingCluster *clusters.Cluster, providerName string) (*clusters.Cluster, error) {
 	onboardingAr := &clustersv1alpha1.AccessRequest{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      clusteraccess.StableRequestNameFromLocalName("externalsecretsoperator.external-secrets.services.openmcp.cloud", cmdSuffix),
+			Name:      clusteraccess.StableRequestNameFromLocalName(providerName, "onboarding-run"),
 			Namespace: os.Getenv("POD_NAMESPACE"),
 		},
 	}

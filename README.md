@@ -15,7 +15,7 @@ A template for building @openmcp-project Platform Services.
 
 The template generates a basic Platform Service with a [Config](https://open-control-plane.io/developers/platformservice/design#config) and [API](https://open-control-plane.io/developers/platformservice/design#api) CRD.
 
-For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://openmcp-project.github.io/docs/developers/platformservices/platform-services).
+For a detailed guide on setup and usage, please refer to the full [Platform Service Development Guide](https://open-control-plane.io/developers/platformservice/develop).
 
 ## Template Taskfiles
 
