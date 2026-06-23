@@ -27,7 +27,7 @@ import (
 // ProviderConfigSpec defines the desired state of ProviderConfig
 type ProviderConfigSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Important: Run "task generate" to regenerate code after modifying this file
 	// The following markers will use OpenAPI v3 schema to validate the value
 	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
 }
@@ -63,9 +63,4 @@ func init() {
 		s.AddKnownTypes(GroupVersion, &ProviderConfig{}, &ProviderConfigList{})
 		return nil
 	})
-}
-
-// Validate validates the configuration.
-func (spec ProviderConfigSpec) Validate() error {
-	return nil
 }
