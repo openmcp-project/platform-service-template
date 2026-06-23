@@ -49,9 +49,9 @@ tasks:
     vars:
       dryrun: '{{.dryrun | default "false"}}'
       api: '{{.api | default "Example"}}'
-      name: '{{.name | default "template"}}'
+      name: '{{.name | default "example"}}'
       watch: '{{.watch | default "platform"}}'
-      module: '{{.module | default "github.com/openmcp-project/platform-service-template"}}'
+      module: '{{.module | default "github.com/openmcp-project/platform-service-example"}}'
     env:
       KIND: "{{ .api }}"
       KIND_LOWER: "{{ lower .api }}"
