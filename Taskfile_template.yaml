@@ -65,5 +65,5 @@ tasks:
         if: '{{ eq .dryrun "false" }}'
       - cmd: go mod edit -module {{.module}}
         if: '{{ eq .dryrun "false" }}'
-      - cmd: sed -i '' 's/platform-service-template/platform-service-{{.name}}/g' Taskfile.yaml
+      - cmd: "{{.ROOT_DIR}}/hack/common/sed.sh 's/platform-service-template/platform-service-{{.name}}/g' Taskfile.yaml"
         if: '{{ eq .dryrun "false" }}'
