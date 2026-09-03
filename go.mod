@@ -1,12 +1,12 @@
 module github.com/openmcp-project/platform-service-template
 
-go 1.26.6
+go 1.27.0
 
 require (
 	github.com/openmcp-project/controller-utils v0.33.0
 	github.com/openmcp-project/opencontrolplane-runtime v1.3.0
-	github.com/openmcp-project/openmcp-operator/api v1.3.0
-	github.com/openmcp-project/openmcp-operator/lib v1.3.0
+	github.com/openmcp-project/openmcp-operator/api v1.4.0
+	github.com/openmcp-project/openmcp-operator/lib v1.4.0
 	github.com/openmcp-project/openmcp-testing v1.3.1
 	github.com/spf13/cobra v1.10.2
 	k8s.io/api v0.37.0
