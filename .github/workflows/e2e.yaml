@@ -9,7 +9,7 @@ permissions:
 jobs:
   test-e2e-platform-api:
     name: Platform Service with Platform Cluster API
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -37,7 +37,7 @@ jobs:
 
   test-e2e-onboarding-api:
     name: Platform Service with Onboarding Cluster API
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
